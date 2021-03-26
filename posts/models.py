@@ -7,6 +7,8 @@ class User(models.Model):
     password=models.CharField(max_length=120)
     first_name=models.CharField(max_length=50)
     last_name=models.CharField(max_length=50)
+
+    is_admin=models.BooleanField(default=False)
     bio=models.TextField(max_length=255)
     birthday=models.DateField(blank=True,null=True)
     created = models.DateField(auto_now_add=True)
