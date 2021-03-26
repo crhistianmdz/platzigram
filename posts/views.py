@@ -34,3 +34,6 @@ posts = [
 
 def home(request):
     return render(request,'home.html')
+
+def list_posts(request):
+    return render(request, 'posts/feed.html',{'posts': posts})
