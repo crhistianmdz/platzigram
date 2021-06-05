@@ -1,2 +1,3 @@
 django==3.0.8
 pillow
+django-crispy-forms
