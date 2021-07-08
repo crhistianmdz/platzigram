@@ -2,16 +2,18 @@
 from django.contrib.auth import authenticate, login, logout
 from django.shortcuts import redirect, render
 from django.contrib.auth.decorators import login_required
+from django.views.generic import DetailView
+
 #exceptions
 from django.db.utils import IntegrityError
+
 #models
 from django.contrib.auth.models import User
 from . import models
 
 #forms
+from users.forms import ProfileForm,SignupForm
 
-from users.forms import ProfileForm
-# Create your views here.
 
 def login_view(request):
     if request.method=='POST':
@@ -31,26 +33,18 @@ def logout_view(request):
 
 def signup_view(request):
     if request.method=='POST':
-        username=request.POST['username']
-        password=request.POST['password']
-        passwordConfirm=request.POST['confirm_password']
-        firstName=request.POST['first_name']
-        lastName=request.POST['last_name']
-        email=request.POST['email']
-        if password != passwordConfirm:
-            return render(request,'users/signup.html',{'error':'Password confirmation no match'})
-        try:
-            user=User.objects.create_user(username=username, email=email, password=password)
-        except IntegrityError:
-            return render(request,'users/signup.html',{'error':'Username is already in user'})
-        user.last_name=lastName
-        user.firs_tname=firstName
-        user.save()
-        profile=models.Profile(user=user)
-        profile.save()
-        return redirect('login_view')
+        form=SignupForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login_view')
+    else:
+        form=SignupForm()
+    return render(
+        request=request,
+        template_name='users/signup.html',
+        context={'form':form},
+    )    
 
-    return render(request,'users/signup.html')
 
 def update_profile_view(request):
     profile=request.user.profile
@@ -76,3 +70,9 @@ def update_profile_view(request):
                 'form': form
             }
         )
+
+class UserDetailView(DetailView):
+    template_name='users/detail.html'
+    slug_field='username'#solo se puede usar un pk o slug 
+    slug_url_kwarg='username'
+    queryset=User.objects.all()

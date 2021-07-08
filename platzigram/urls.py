@@ -8,7 +8,7 @@ from posts import urls
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('posts.urls')),
-    path('users/',include('users.urls')),
+    path('', include(('posts.urls','posts'),namespace='post')),
+    path('users/',include(('users.urls','users'),namespace='users')),
 ]
 urlpatterns+=static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
